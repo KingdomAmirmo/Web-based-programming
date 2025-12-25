@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
@@ -22,3 +24,13 @@ Route::prefix('posts/{post}')->group(function () {
 });
 
 Route::resource('comments', CommentController::class)->except(['create','store']);
+
+
+Route::get('/having-test', function () {
+    $users = Order::select('user_id', DB::raw('SUM(total_amount) as total'))
+        ->groupBy('user_id')
+        ->having('total', '>', 500)
+        ->get();
+
+    return view('having', compact('users'));
+});
